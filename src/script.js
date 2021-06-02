@@ -21,8 +21,8 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Objects
-const geometry = new THREE.IcosahedronGeometry( 0.9, 4);
-const ringGeometry = new THREE.TorusGeometry(1.2,0.05,9,40,6.3)
+const geometry = new THREE.IcosahedronGeometry( 0.4, 4);
+const ringGeometry = new THREE.TorusGeometry(.6,0.05,9,40,6.3)
 
 // Materials
 const material = new THREE.MeshStandardMaterial()
@@ -37,8 +37,6 @@ const ring = new THREE.Mesh(ringGeometry,material)
 ring.rotation.x = 300
 scene.add(sphere)
 scene.add(ring)
-
-gui.add(ring.rotation, 'z').min(0).max(360).step(1)
 
 // Lights
 const pointLight = new THREE.PointLight(0xff0000, 0.1)
