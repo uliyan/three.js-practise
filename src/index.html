@@ -1,23 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>ThreeJS Starter</title>
-</head>
-<body>
-    <div class=container>
-        <h1>A sphere!</h1>
-    </div>
-    <canvas class="webgl"></canvas>
-    <section>
-        <div class="m-5">
-            <p>
-                This is my first go at Three.js. Very exciting to play around with
-                so i'll keep going on with it creating new things!
-            </p>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <title>ThreeJS Starter</title>
+    </head>
+    <body>
+        <div class=container>
+            <h1>A sphere!</h1>
         </div>
-    </section>
-</body>
+        <canvas id="sphere" class="webgl"></canvas>
+        <section class="pb-5">
+            <div class="m-5">
+                <p>
+                    This is my first go at Three.js. Very exciting to play around with
+                    so i'll keep going on creating new things!
+                </p>
+            </div>
+            <hr style="height:1px; background-color:white">
+        </section>
+        <canvas id="panel" class=""></canvas>
+        <section class="pb-5">
+            <div class="m-5">
+                <p>
+                    Making a spinning panel!
+                </p>
+                <input id="btn" type="button" value="Spin!" class="btn btn-outline-light">                    
+            </div>
+            <hr style="height:1px; background-color:white">
+        </section>
+    </body>
 </html>

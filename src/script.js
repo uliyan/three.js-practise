@@ -14,8 +14,12 @@ const normTexture = textureLoader.load('/textures/normalMap.png')
 // Debug
 const gui = new dat.GUI()
 
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
+/**
+ * --------------------------------------------------------------------------
+ * Canvas for Sphere
+ * --------------------------------------------------------------------------
+ */
+const canvas = document.querySelector('canvas#sphere')
 
 // Scene
 const scene = new THREE.Scene()
@@ -90,9 +94,12 @@ window.addEventListener('resize', () =>
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
 
-    // Update renderer
+    // Update renderers
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    panRenderer.setSize(sizes.width, sizes.height)
+    panRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
 /**
@@ -120,28 +127,86 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
+ * --------------------------------------------------------------------------
+ * Canvas for Panel
+ * --------------------------------------------------------------------------
+ */
+ const panCanvas = document.querySelector('canvas#panel')
+
+ // Scene
+ const panScene = new THREE.Scene()
+
+ // Objects
+const panGeometry = new THREE.PlaneGeometry(1,1.5)
+
+// Materials
+const panMaterial = new THREE.MeshBasicMaterial()
+panMaterial.color = new THREE.Color(0x49ef4)
+
+// Mesh
+const panel = new THREE.Mesh(panGeometry,panMaterial)
+panScene.add(panel)
+panel.rotation.y = 0.8
+panel.position.x = -0.8
+
+gui.add(panel.position,'x').min(-10).max(10).step(.1)
+gui.add(panel.rotation,'y').min(0).max(360).step(.1)
+gui.add(panel.rotation,'z').min(0).max(360)
+
+/**
+ * Camera
+ */
+// Base camera
+const panCamera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+panCamera.position.x = 0
+panCamera.position.y = 0
+panCamera.position.z = 2
+panScene.add(panCamera)
+
+/**
+ * Renderer
+ */
+const panRenderer = new THREE.WebGLRenderer({
+    canvas: panCanvas,
+})
+panRenderer.setSize(sizes.width, sizes.height)
+panRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+/**
  * Animate
  */
 
-const clock = new THREE.Clock()
+ const clock = new THREE.Clock()
 
-const tick = () =>
-{
+ const tick = () =>
+ {
+ 
+     const elapsedTime = clock.getElapsedTime()
+ 
+     // Update objects
+     sphere.rotation.y = .5 * elapsedTime
+     ring.rotation.z = -.3 * elapsedTime
+ 
+     // Update Orbital Controls
+     // controls.update()
+ 
+     // Renders
+     renderer.render(scene, camera)
+     panRenderer.render(panScene, panCamera)
+ 
+     // Call tick again on the next frame
+     window.requestAnimationFrame(tick)
+ }
+ 
+ tick()
 
-    const elapsedTime = clock.getElapsedTime()
-
-    // Update objects
-    sphere.rotation.y = .5 * elapsedTime
-    ring.rotation.z = -.3 * elapsedTime
-
-    // Update Orbital Controls
-    // controls.update()
-
-    // Render
-    renderer.render(scene, camera)
-
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
-}
-
-tick()
+ document.getElementById('btn').onclick = function(){
+    console.log('You pressed the ting!')
+    if(panel.position.x > 0){
+        panel.position.x = -0.8
+        panel.rotation.y = 0.8
+    }else{
+        panel.position.x = 0.8
+        panel.rotation.y = -0.8
+    } 
+ }
