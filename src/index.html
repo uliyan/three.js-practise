@@ -7,7 +7,7 @@
         <title>ThreeJS Starter</title>
     </head>
     <body>
-        <div class=container>
+        <div class='container1'>
             <h1>A sphere!</h1>
         </div>
         <canvas id="sphere" class="webgl"></canvas>
@@ -20,13 +20,20 @@
             </div>
             <hr style="height:1px; background-color:white">
         </section>
-        <canvas id="panel" class=""></canvas>
+
+        <div class="position-relative">
+            <span class="container1">
+                <input id="btn" type="button" value="Spin!" class="btn btn-outline-warning">
+                <p id="txt" style="display: none;" class="bg-dark text-warning">Sheeeeeeeeeeeeeeeeeeeesh!!!!!!!!!</p> 
+            </span>
+            <canvas id="panel" class="webgl-1"></canvas>
+        </div>
+
         <section class="pb-5">
             <div class="m-5">
                 <p>
-                    Making a spinning panel!
+                    Making a spinning panel! Canvas has an overlay for a button and some text.
                 </p>
-                <input id="btn" type="button" value="Spin!" class="btn btn-outline-light">                    
             </div>
             <hr style="height:1px; background-color:white">
         </section>

@@ -2,7 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-import { PointLightHelper, Texture } from 'three'
+import { NumberKeyframeTrack, PointLightHelper, Texture } from 'three'
 
 //Loading
 const textureLoader =  new THREE.TextureLoader()
@@ -13,6 +13,9 @@ const normTexture = textureLoader.load('/textures/normalMap.png')
 
 // Debug
 const gui = new dat.GUI()
+
+//Axis display
+const axesHelper = new THREE.AxesHelper( 10 );
 
 /**
  * --------------------------------------------------------------------------
@@ -131,23 +134,25 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Canvas for Panel
  * --------------------------------------------------------------------------
  */
- const panCanvas = document.querySelector('canvas#panel')
+const panCanvas = document.querySelector('canvas#panel')
 
- // Scene
- const panScene = new THREE.Scene()
+// Scene
+const panScene = new THREE.Scene()
+//panScene.add( axesHelper );
 
- // Objects
+// Objects
 const panGeometry = new THREE.PlaneGeometry(1,1.5)
 
 // Materials
 const panMaterial = new THREE.MeshBasicMaterial()
-panMaterial.color = new THREE.Color(0x49ef4)
+panMaterial.color = new THREE.Color(0xf0ad4e)
+panMaterial.side = 2
 
 // Mesh
 const panel = new THREE.Mesh(panGeometry,panMaterial)
 panScene.add(panel)
-panel.rotation.y = 0.8
-panel.position.x = -0.8
+panel.rotation.y = 0.5
+panel.position.x = -.9
 
 gui.add(panel.position,'x').min(-10).max(10).step(.1)
 gui.add(panel.rotation,'y').min(0).max(360).step(.1)
@@ -176,37 +181,65 @@ panRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 
- const clock = new THREE.Clock()
+const clock = new THREE.Clock()
 
- const tick = () =>
- {
- 
-     const elapsedTime = clock.getElapsedTime()
- 
-     // Update objects
-     sphere.rotation.y = .5 * elapsedTime
-     ring.rotation.z = -.3 * elapsedTime
- 
-     // Update Orbital Controls
-     // controls.update()
- 
-     // Renders
-     renderer.render(scene, camera)
-     panRenderer.render(panScene, panCamera)
- 
-     // Call tick again on the next frame
-     window.requestAnimationFrame(tick)
- }
- 
- tick()
+const tick = () =>
+{
 
- document.getElementById('btn').onclick = function(){
-    console.log('You pressed the ting!')
-    if(panel.position.x > 0){
-        panel.position.x = -0.8
-        panel.rotation.y = 0.8
-    }else{
-        panel.position.x = 0.8
-        panel.rotation.y = -0.8
-    } 
- }
+    const elapsedTime = clock.getElapsedTime()
+
+    // Update objects
+    sphere.rotation.y = .5 * elapsedTime
+    ring.rotation.z = -.3 * elapsedTime
+
+    // Update Orbital Controls
+    // controls.update()
+
+    // Renders
+    renderer.render(scene, camera)
+    panRenderer.render(panScene, panCamera)
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick)
+}
+
+tick()
+
+ //Keyframes
+const positionKF = new THREE.VectorKeyframeTrack( '.position', [ 0, 1, 2 ], [ -0.8, 0, 0, 0.8, 0, 0, 0, 0, 0 ] );
+
+// set up rotation about x axis
+const yAxis = new THREE.Vector3( 0, 1, 0 );
+
+const qInitial = new THREE.Quaternion().setFromAxisAngle( yAxis, 0.8 );
+const qFinal = new THREE.Quaternion().setFromAxisAngle( yAxis, -0.8 );
+const quaternionKF = new THREE.QuaternionKeyframeTrack( '.quaternion', [ 0, 1, 2 ], [ qInitial.x, qInitial.y, qInitial.z, qInitial.w, qFinal.x, qFinal.y, qFinal.z, qFinal.w, qInitial.x, qInitial.y, qInitial.z, qInitial.w ] );
+
+
+//Animating keyframes
+const clip = new THREE.AnimationClip('Spin', 1, [positionKF, quaternionKF])
+const mixer = new THREE.AnimationMixer(panel)
+const action = mixer.clipAction(clip)
+action.setLoop(THREE.LoopOnce,1)
+action.setDuration(.05)
+action.clampWhenFinished = true
+
+document.getElementById('btn').onclick = function(){
+    document.getElementById('btn').style.display = "none"
+    document.getElementById('txt').style.display = "initial"
+    action.play()
+    animate()
+}
+
+function animate() {
+    requestAnimationFrame( animate )
+    render()
+}
+
+function render() {
+    const delta = clock.getDelta();
+    if ( mixer ) {
+        mixer.update( delta );
+    }
+    panRenderer.render( panScene, panCamera );
+}
